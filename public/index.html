@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title>mcTermJs</title>
+
+  <link href="css/mctermjs.css" rel="stylesheet">
+  <link href="css/draggable.css" rel="stylesheet">
+</head>
+
+<body ng-app="mcTermJsDemo">
+  <div class="container" ng-controller="mcTermJsDemoCtrl">
+    <h1>{{ moduleName }} Demo</h1>
+
+    <button mc-terminal-opener="options">Open Terminal</button>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/term.js"></script>
+
+  <script src="js/vendor.js"></script>
+  <script src="js/mctermjs.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>

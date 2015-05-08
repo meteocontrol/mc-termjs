@@ -1,0 +1,40 @@
+{
+  "name": "mcTermJs",
+  "version": "0.0.0",
+  "main": "mcTermJs.js",
+  "dependencies": {
+    "basic-auth": "^1.0.1",
+    "chalk": "^1.0.0",
+    "dateformat": "^1.0.11",
+    "pty.js": "^0.2.7-1"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "chalk": "*",
+    "coffee-script": "*",
+    "connect-livereload": "*",
+    "express": "*",
+    "gulp": "*",
+    "gulp-angular-templatecache": "^1.6.0",
+    "gulp-coffeelint": "*",
+    "gulp-compile-js": "*",
+    "gulp-concat": "*",
+    "gulp-connect": "*",
+    "gulp-karma": "*",
+    "gulp-load-plugins": "*",
+    "gulp-mocha": "*",
+    "gulp-ng-annotate": "^0.5.3",
+    "gulp-util": "*",
+    "karma": "*",
+    "karma-chai": "*",
+    "karma-chrome-launcher": "*",
+    "karma-coffee-preprocessor": "*",
+    "karma-mocha": "*",
+    "karma-phantomjs-launcher": "*",
+    "karma-sinon": "*",
+    "main-bower-files": "^2.7.0",
+    "mocha": "*",
+    "sinon": "*",
+    "tiny-lr": "*"
+  }
+}
