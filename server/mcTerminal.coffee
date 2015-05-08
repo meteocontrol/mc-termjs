@@ -51,12 +51,13 @@ class McTerminal
     @_addTerminalListener()
     @_addSocketListener()
 
-    log "#{chalk.bold.green 'Created'} #{chalk.bold.cyan @shell} shell with pty pid: #{chalk.bold.cyan @terminal.pid}"
+    log "#{chalk.bold.green 'Created Terminal'}: #{chalk.bold.cyan @shell} shell with pty pid: #{chalk.bold.cyan @terminal.pid}"
 
   destroy: ->
     return unless @terminal
-    log "#{chalk.bold.red 'Destroyed'} #{chalk.bold.cyan @shell} shell with pty pid: #{chalk.bold.cyan @terminal.pid}"
+    log "#{chalk.bold.red 'Destroyed Terminal'}: #{chalk.bold.cyan @shell} shell with pty pid: #{chalk.bold.cyan @terminal.pid}"
     @terminal.kill 9
+    @terminal.destroy()
     @terminal = null
     @_removeSocketListener()
 

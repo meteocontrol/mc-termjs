@@ -6,7 +6,10 @@
     "basic-auth": "^1.0.1",
     "chalk": "^1.0.0",
     "dateformat": "^1.0.11",
-    "pty.js": "^0.2.7-1"
+    "messenger": "0.0.9",
+    "pty.js": "^0.2.7-1",
+    "server-destroy": "^1.0.0",
+    "term.js": "0.0.4"
   },
   "devDependencies": {
     "chai": "*",

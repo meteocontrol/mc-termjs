@@ -11,50 +11,6 @@ term        = require('term.js')
 
 io          = require('socket.io')
 
-server =
-  port: 2342
-  livereloadPort: 35729
-  basePath: path.join(__dirname)
-  _lr: null
-  started: null
-  start: ->
-    console.log chalk.white("Start Express")
-    express = require("express")
-    app = express()
-    app.use require("connect-livereload")()
-    app.use term.middleware()
-    app.use express.static(server.basePath)
-
-    expressInstance = app.listen server.port
-
-    socketio = io.listen expressInstance
-
-    socketio.on 'connection', (socket) ->
-
-    app.get '/', (req, res) ->
-      res.redirect 'demo/'
-
-    console.log chalk.cyan("Express started: #{server.port}")
-    server.started = true
-    return
-
-  livereload: ->
-    server._lr = require("tiny-lr")()
-    server._lr.listen server.livereloadPort
-    console.log chalk.cyan("Live-Reload on: #{server.livereloadPort}")
-    return
-
-  livestart: ->
-    server.start()
-    server.livereload()
-    return
-
-  notify: (event) ->
-    fileName = path.relative(server.basePath, event.path)
-    server._lr.changed body:
-      files: [fileName]
-    return
-
 
 gulp.task "scripts", ->
   sources =[
@@ -104,8 +60,26 @@ gulp.task "vendorJS", ->
   .pipe gulp.dest("./public/js")
 
 
-gulp.task "livereload", ->
-  server.livestart()
+
+gulp.task "deploy-server", ->
+  sources =[
+    "./server/**/*.coffee"
+  ]
+  gulp.src(sources)
+  .pipe(
+    compile
+      coffee:
+        bare: true
+  )
+  .pipe gulp.dest("./build/server")
+
+gulp.task "deploy-client", ->
+  sources =[
+    "./public/**/*"
+  ]
+  gulp.src(sources)
+  .pipe gulp.dest("./build/public")
+
 
 
 gulp.task "watchSourceFiles", ->
@@ -122,25 +96,6 @@ gulp.task "watchTemplates", ->
   gulp.watch sources, ["compile-templates"]
 
 
-gulp.task "watchBuildFiles", ->
-  sources = [
-    "./public/**/*.js"
-  ]
-  gulp.watch sources, (event) ->
-    console.log event
-    server.notify event
-
-
-gulp.task "watchDemoFiles", ->
-  sources = [
-    "./public/**/*.html"
-    "./public/**/*.css"
-  ]
-  gulp.watch sources, (event) ->
-    console.log event
-    server.notify event
-
-
 gulp.task "karma-unit", ->
   gulp.src('./idontexist')
   .pipe(plugins.karma
@@ -149,16 +104,25 @@ gulp.task "karma-unit", ->
   )
   .on 'error', (err) ->
 
+
+
 gulp.task "default", [
+  "build"
+  "watchSourceFiles"
+  "watchTemplates"
+]
+
+gulp.task "build", [
   "scripts"
   "compile-templates"
   "demoScripts"
   "karma-unit"
   "vendorJS"
-  "livereload"
-  "watchSourceFiles"
-  "watchTemplates"
-  "watchBuildFiles"
-  "watchDemoFiles"
+]
 
+
+gulp.task "deploy", [
+  "build"
+  "deploy-server"
+  "deploy-client"
 ]

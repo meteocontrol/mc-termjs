@@ -32,12 +32,7 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
       })(this));
       mcSocket.on('disconnect', (function(_this) {
         return function() {
-          return _this.terminal.write('\r\n\x1b[31mSocket disconnected!\x1b[m\r\n');
-        };
-      })(this));
-      mcSocket.on('forced:disconnect', (function(_this) {
-        return function() {
-          return _this.terminal.write('\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n');
+          return _this.terminal.write('\n\x1b[31mSocket disconnected!\x1b[m\r\n');
         };
       })(this));
       mcSocket.on('reconnecting', (function(_this) {

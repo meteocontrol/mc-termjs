@@ -7,17 +7,22 @@ angular.module 'mcTermJs', [
 .factory 'mcSocket', (socketFactory) ->
   socketFactory prefix: 'mcTerm'
 
-.service "terminal", ($document, mcSocket) ->
+.service "terminal", ($rootScope, $document, mcSocket) ->
 
-  terminal: new Terminal
-    cols: 80,
-    rows: 24,
-    useStyle: true,
-    screenKeys: true,
-    cursorBlink: true
+  createTerminal: ->
+    new Terminal
+      cols:         80
+      rows:         24
+      useStyle:     true
+      screenKeys:   true
+      cursorBlink:  true
 
 
   open: (element) ->
+    return if @terminal
+
+    @terminal = @createTerminal()
+
     mcSocket.emit 'terminal:create'
 
     mcSocket.on 'terminal:created', =>
@@ -29,19 +34,29 @@ angular.module 'mcTermJs', [
       @terminal.write data
 
     mcSocket.on 'disconnect', =>
-      @terminal.destroy()
+      @terminal.write '\r\n\x1b[31mSocket disconnected!\x1b[m\r\n'
+
+    mcSocket.on 'forced:disconnect', =>
+      @terminal.write '\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n'
+
+    mcSocket.on 'reconnecting', (number) =>
+      @terminal.write "\x1b[31mTrying to reconnect socket! Attempt:#{number}\x1b[m\r\n"
+
+    mcSocket.on 'reconnect', =>
+      @terminal.write "\x1b[31mSuccessfully reconnected to socket\x1b[m\r\n"
 
     @terminal.on 'data', (data) ->
       mcSocket.emit 'data', data
 
   close: ->
-    mcSocket.emit 'close'
+    mcSocket.emit 'terminal:destroy'
 
     mcSocket.removeAllListeners 'data'
     mcSocket.removeAllListeners 'terminal:created'
     mcSocket.removeAllListeners 'disconnect'
 
-    @terminal.destroy()
+
+    @terminal = null
 
 
   write: (text) ->
