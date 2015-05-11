@@ -84,7 +84,7 @@ class McTerminalHttpServer
         sock.emit 'terminal:created'
 
 
-      sock.on 'disconnect', ->
+      sock.on 'disconnect', =>
         log chalk.green "Socket-Client disconnected. #{ chalk.bold.cyan sock.id}"
         @mcTerminal.destroy()
 
@@ -112,7 +112,6 @@ class McTerminalHttpServer
     @server.destroy ->
       log  "#{chalk.green 'Http-Server Closed!'}"
       callback()
-
 
 
 server = new McTerminalHttpServer()
