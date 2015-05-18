@@ -9,7 +9,8 @@
     "messenger": "0.0.9",
     "pty.js": "^0.2.7-1",
     "server-destroy": "^1.0.0",
-    "term.js": "0.0.4"
+    "term.js": "0.0.4",
+    "socket.io": "*"
   },
   "devDependencies": {
     "chai": "*",
@@ -36,6 +37,7 @@
     "karma-phantomjs-launcher": "*",
     "karma-sinon": "*",
     "main-bower-files": "^2.7.0",
+    "mctermjs": "0.0.1",
     "mocha": "*",
     "sinon": "*",
     "tiny-lr": "*"

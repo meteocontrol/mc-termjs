@@ -1,18 +1,17 @@
 #!/usr/bin/env coffee
+
 path       = require 'path'
 http       = require 'http'
 express    = require 'express'
 io         = require 'socket.io'
-
+net        = require 'net'
+fs         = require 'fs'
 chalk      = require 'chalk'
 log        = require './log'
 
 enableDestroy = require('server-destroy')
 
-McTerminal = require './McTerminal'
-
-messenger = require 'messenger'
-
+McTerminal = require 'mctermjs'
 
 class McTerminalHttpServer
 
@@ -20,8 +19,6 @@ class McTerminalHttpServer
   retryTimeout: 5000
 
   constructor: ->
-    @messageOverTCPListener = messenger.createListener 2342
-
     @app = express()
     @server = http.Server @app
     enableDestroy @server
@@ -33,7 +30,7 @@ class McTerminalHttpServer
     @register("NodeProcessErrorHandler")
     @register("StaticFolder")
     @register("HttpErrorHandler")
-    @register("ShutdownOnMessage")
+    @register("ProcessCommunicationServer")
     @register("SocketListeners")
     @register("ServerListeners")
 
@@ -66,14 +63,21 @@ class McTerminalHttpServer
       console.trace 'Exception ', err
 
 
-  registerShutdownOnMessage: ->
-    @messageOverTCPListener.on 'McTerminal:Shutdown', (message, data) =>
-      log chalk.cyan "Got Shutdown Signal. Init Server shutdown!"
-      @destroy.call @, =>
-        log chalk.cyan "Going into check mode!"
-        @retryToListen()
-        message.reply mcTerminal: 'shutdown'
+  registerProcessCommunicationServer: ->
+    @processCommunicationServer = net.createServer (sock) =>
+      log "Client connected"
+      sock.on 'data', (data) =>
+        message = data.toString()
+        log "Got message from client", message
+        if message == "McTerminal:shutdown"
+          log chalk.cyan "Got Shutdown Signal. Init Server shutdown!"
+          @destroy =>
+            sock.write "McTerminal:shutdown:success"
+            @retryToListen()
 
+    fs.unlink "/tmp/McTerminal.sock" if fs.existsSync "/tmp/McTerminal.sock"
+    @processCommunicationServer.listen "/tmp/McTerminal.sock", ->
+      log "McTerminalSocket bound"
 
   registerSocketListeners: ->
     @socketIo.sockets.on 'connection', (sock) =>
