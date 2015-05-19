@@ -1,5 +1,8 @@
 .draggable-container {
+    min-height: 30px;
+    height: 352px;
     position: absolute;
+    overflow: hidden;
     background-color: #ccc;
     padding: 3px 0 0 3px;
     border: 1px solid #999;
@@ -8,9 +11,9 @@
     -moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);
     box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);
 
-    -webkit-transition: opacity 200ms ease-in-out;
-    -moz-transition: opacity 200ms ease-in-out;
-    transition: opacity 200ms ease-in-out;
+    -webkit-transition: height 200ms linear;
+    -moz-transition: height 200ms linear;
+    transition: height 200ms linear;
     opacity: 1
 }
 

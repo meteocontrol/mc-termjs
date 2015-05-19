@@ -1,6 +1,6 @@
 # Karma configuration
 karmaFiles = [
-  'public/js/vendor.js'
+  'demo/js/vendor.js'
   'bower_components/angular-mocks/angular-mocks.js'
 
   'src/**/*.coffee'

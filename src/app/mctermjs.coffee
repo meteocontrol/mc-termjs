@@ -63,13 +63,23 @@ angular.module 'mcTermJs', [
     return unless text
     @terminal.write text
 
+  focus: ->
+    @terminal.focus()
 
 .directive 'mcTerminalOpener', ($document, $templateCache, $compile, terminal) ->
   restrict: "A"
   scope:
     options: "="
   link: (scope, el, attrs) ->
+    scope.terminal =
+      isOpen: false
+      isHidden: false
     el.on 'click', ->
+      if scope.terminal.isOpen
+        scope.terminal.isHidden = false
+        terminal.focus()
+        return scope.$apply()
+
       draggableContainer = $templateCache.get 'app/terminalContainer.tpl.html'
       draggableContainer = $compile(draggableContainer)(scope)
       $document.find('body').append draggableContainer
@@ -77,11 +87,29 @@ angular.module 'mcTermJs', [
       terminalContainer =  draggableContainer.find('mc-terminal')
       terminal.open terminalContainer[0]
 
+      scope.terminal.isOpen = true
+
 
 .directive 'mcTerminalClose', ($document, terminal) ->
   restrict: "E"
-  template: "<div class='terminal-close'>X</div>"
+  template: "<div class='terminal-control'>X</div>"
   link: (scope, el, attrs) ->
     el.on 'click', ->
       terminal.close()
       $document.find('mc-terminal-container').remove()
+      scope.terminal.isOpen = false
+
+
+.directive 'mcTerminalHide', ($document, terminal) ->
+  restrict: "E"
+  template: "<div class='terminal-control'>_</div>"
+  link: (scope, el, attrs) ->
+
+    el.on 'click', ->
+      scope.$apply ->
+        scope.terminal.isHidden = !scope.terminal.isHidden
+
+    scope.$watch "terminal.isHidden", ->
+      console.log scope.terminal.isHidden
+      height = if scope.terminal.isHidden then "30px" else null
+      $document.find('mc-terminal-container').css height: height
