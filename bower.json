@@ -1,16 +1,27 @@
 {
   "name": "mctermjsangular",
-  "main": "build/mcterm.js",
-  "version": "0.0.1",
-  "authors": [
+  "main": [
+    "build/mcterm.js",
+    "build/mcterm.css"
   ],
+  "version": "0.0.2",
+  "authors": [
+    {"name": "Thomas Achleitner", "email": "t.achleitner@metecontrol.de"}
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:meteocontrol/mc-termjs.git"
+  },
   "license": "MIT",
   "private": false,
   "ignore": [
-    "**/.*",
+    "*.*",
     "node_modules",
     "bower_components",
-    "test"
+    "public",
+    "src",
+    "server",
+    "demo"
   ],
   "dependencies": {
     "angular": "*",

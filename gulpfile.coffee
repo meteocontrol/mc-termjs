@@ -6,10 +6,10 @@ compile     = require "gulp-compile-js"
 bowerFiles  = require('main-bower-files')
 
 
-gulp.task "scripts", ->
+gulp.task "build-scripts", ->
   sources =[
     "!./src/**/*.spec.coffee"
-    "!./src/demo.coffee"
+    "!./src/app/demo.coffee"
     "./src/**/*.coffee"
   ]
   gulp.src(sources)
@@ -20,8 +20,24 @@ gulp.task "scripts", ->
   )
   .pipe(plugins.ngAnnotate( single_quotes: true ))
   .pipe(plugins.concat("mctermjs.js"))
-  .pipe gulp.dest("./build/js")
   .pipe gulp.dest("./demo/js")
+
+
+gulp.task "build-styles", ->
+  sources =[
+    "./src/**/*.css"
+  ]
+  gulp.src(sources)
+  .pipe(plugins.concat("mctermjs.css"))
+  .pipe gulp.dest("./demo/css")
+
+
+gulp.task "copy-index", ->
+  sources =[
+    "./src/index.html"
+  ]
+  gulp.src(sources)
+  .pipe gulp.dest("./demo/")
 
 
 gulp.task "compile-templates", ->
@@ -33,13 +49,12 @@ gulp.task "compile-templates", ->
     plugins.angularTemplatecache
       module: 'mcTermJs'
   )
-  .pipe gulp.dest("./build/js")
   .pipe gulp.dest("./demo/js")
 
 
 gulp.task "build-demo-scripts", ->
   sources =[
-    "./src/demo.coffee"
+    "./src/app/demo.coffee"
   ]
   gulp.src(sources)
   .pipe(
@@ -57,21 +72,34 @@ gulp.task "build-vendorjs", ->
 
 
 
-gulp.task "deploy-client", ->
+gulp.task "deploy-app", ->
   sources =[
-    "./public/**/*"
+    "./demo/js/mctermjs.js"
+    "./demo/js/templates.js"
+  ]
+  gulp.src(sources)
+  .pipe(plugins.concat("mctermjs.js"))
+  .pipe gulp.dest("./build/")
+
+  sources =[
+    "./demo/css/**/*.css"
   ]
   gulp.src(sources)
   .pipe gulp.dest("./build/")
-
 
 
 gulp.task "watch-source-files", ->
   sources = [
     "./src/**/*.coffee"
   ]
-  gulp.watch sources, ["scripts", "build-demo-scripts", "karma-unit"]
+  gulp.watch sources, ["build-scripts", "build-demo-scripts", "karma-unit"]
 
+
+gulp.task "watch-styles", ->
+  sources = [
+    "./src/**/*.css"
+  ]
+  gulp.watch sources, ["build-styles"]
 
 gulp.task "watch-templates", ->
   sources = [
@@ -96,12 +124,15 @@ gulp.task "start-server", ->
 gulp.task "default", [
   "build"
   "watch-source-files"
+  "watch-styles"
   "watch-templates"
   "start-server"
 ]
 
 gulp.task "build", [
-  "scripts"
+  "build-scripts"
+  "build-styles"
+  "copy-index"
   "compile-templates"
   "build-demo-scripts"
   "karma-unit"
@@ -111,5 +142,5 @@ gulp.task "build", [
 
 gulp.task "deploy", [
   "build"
-  "deploy-client"
+  "deploy-app"
 ]

@@ -70,7 +70,7 @@ angular.module 'mcTermJs', [
     options: "="
   link: (scope, el, attrs) ->
     el.on 'click', ->
-      draggableContainer = $templateCache.get 'terminalContainer.tpl.html'
+      draggableContainer = $templateCache.get 'app/terminalContainer.tpl.html'
       draggableContainer = $compile(draggableContainer)(scope)
       $document.find('body').append draggableContainer
 

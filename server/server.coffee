@@ -46,7 +46,7 @@ class McTerminalHttpServer
 
 
   registerStaticFolder: ->
-    @app.use express.static path.join __dirname + '/../public'
+    @app.use express.static path.join __dirname + '/../demo'
 
 
   registerHttpErrorHandler: ->
