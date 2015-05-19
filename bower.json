@@ -1,7 +1,7 @@
 {
-  "name": "mctermjs",
-  "main": "app.js",
-  "version": "0.0.0",
+  "name": "mctermjsangular",
+  "main": "build/mcterm.js",
+  "version": "0.0.1",
   "authors": [
   ],
   "license": "MIT",

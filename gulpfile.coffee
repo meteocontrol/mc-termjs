@@ -5,12 +5,6 @@ plugins     = require("gulp-load-plugins")(lazy: false)
 compile     = require "gulp-compile-js"
 bowerFiles  = require('main-bower-files')
 
-chalk       = require "chalk"
-path        = require "path"
-term        = require('term.js')
-
-io          = require('socket.io')
-
 
 gulp.task "scripts", ->
   sources =[
@@ -26,7 +20,8 @@ gulp.task "scripts", ->
   )
   .pipe(plugins.ngAnnotate( single_quotes: true ))
   .pipe(plugins.concat("mctermjs.js"))
-  .pipe gulp.dest("./public/js")
+  .pipe gulp.dest("./build/js")
+  .pipe gulp.dest("./demo/js")
 
 
 gulp.task "compile-templates", ->
@@ -38,10 +33,11 @@ gulp.task "compile-templates", ->
     plugins.angularTemplatecache
       module: 'mcTermJs'
   )
-  .pipe gulp.dest("./public/js")
+  .pipe gulp.dest("./build/js")
+  .pipe gulp.dest("./demo/js")
 
 
-gulp.task "demoScripts", ->
+gulp.task "build-demo-scripts", ->
   sources =[
     "./src/demo.coffee"
   ]
@@ -51,45 +47,33 @@ gulp.task "demoScripts", ->
       coffee:
         bare: true
     )
-  .pipe gulp.dest("./public/js")
+  .pipe gulp.dest("./demo/js")
 
 
-gulp.task "vendorJS", ->
+gulp.task "build-vendorjs", ->
   gulp.src(bowerFiles())
   .pipe(plugins.concat("vendor.js"))
-  .pipe gulp.dest("./public/js")
+  .pipe gulp.dest("./demo/js")
 
 
-
-gulp.task "deploy-server", ->
-  sources =[
-    "./server/**/*.coffee"
-  ]
-  gulp.src(sources)
-  .pipe(
-    compile
-      coffee:
-        bare: true
-  )
-  .pipe gulp.dest("./build/server")
 
 gulp.task "deploy-client", ->
   sources =[
     "./public/**/*"
   ]
   gulp.src(sources)
-  .pipe gulp.dest("./build/public")
+  .pipe gulp.dest("./build/")
 
 
 
-gulp.task "watchSourceFiles", ->
+gulp.task "watch-source-files", ->
   sources = [
     "./src/**/*.coffee"
   ]
-  gulp.watch sources, ["scripts", "demoScripts", "karma-unit"]
+  gulp.watch sources, ["scripts", "build-demo-scripts", "karma-unit"]
 
 
-gulp.task "watchTemplates", ->
+gulp.task "watch-templates", ->
   sources = [
     "./src/**/*.tpl.html"
   ]
@@ -104,25 +88,28 @@ gulp.task "karma-unit", ->
   )
   .on 'error', (err) ->
 
+gulp.task "start-server", ->
+  plugins.developServer.listen path: './server/server.coffee'
+
 
 
 gulp.task "default", [
   "build"
-  "watchSourceFiles"
-  "watchTemplates"
+  "watch-source-files"
+  "watch-templates"
+  "start-server"
 ]
 
 gulp.task "build", [
   "scripts"
   "compile-templates"
-  "demoScripts"
+  "build-demo-scripts"
   "karma-unit"
-  "vendorJS"
+  "build-vendorjs"
 ]
 
 
 gulp.task "deploy", [
   "build"
-  "deploy-server"
   "deploy-client"
 ]
