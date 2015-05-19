@@ -1,8 +1,8 @@
 {
   "name": "mctermjsangular",
   "main": [
-    "build/mcterm.js",
-    "build/mcterm.css"
+    "build/mctermjs.js",
+    "build/mctermjs.css"
   ],
   "version": "0.0.2",
   "authors": [
@@ -15,10 +15,9 @@
   "license": "MIT",
   "private": false,
   "ignore": [
-    "*.*",
+    "**/.*",
     "node_modules",
     "bower_components",
-    "public",
     "src",
     "server",
     "demo"
