@@ -4,7 +4,7 @@
     "build/mctermjs.js",
     "build/mctermjs.css"
   ],
-  "version": "0.0.3",
+  "version": "0.0.5",
   "authors": [
     {"name": "Thomas Achleitner", "email": "t.achleitner@metecontrol.de"}
   ],
@@ -15,13 +15,9 @@
   "license": "MIT",
   "private": false,
   "ignore": [
-    "!build",
-    "./*.*",
-    "node_modules",
-    "bower_components",
-    "src",
-    "server",
-    "demo"
+    "*",
+    "**/*",
+    "!build"
   ],
   "dependencies": {
     "angular": "*",
