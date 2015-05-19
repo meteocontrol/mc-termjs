@@ -72,7 +72,7 @@ gulp.task "build-vendorjs", ->
 
 
 
-gulp.task "deploy-app", ->
+gulp.task "deploy-app",["build"], ->
   sources =[
     "./demo/js/mctermjs.js"
     "./demo/js/templates.js"
@@ -141,6 +141,5 @@ gulp.task "build", [
 
 
 gulp.task "deploy", [
-  "build"
   "deploy-app"
 ]
