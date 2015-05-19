@@ -1,5 +1,5 @@
 {
-  "name": "mctermjsangular",
+  "name": "mc-termjs",
   "main": [
     "build/mctermjs.js",
     "build/mctermjs.css"
@@ -15,6 +15,7 @@
   "license": "MIT",
   "private": false,
   "ignore": [
+    "!build",
     "./*.*",
     "node_modules",
     "bower_components",
