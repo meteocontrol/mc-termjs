@@ -66,6 +66,9 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
         return;
       }
       return this.terminal.write(text);
+    },
+    focus: function() {
+      return this.terminal.focus();
     }
   };
 }]).directive('mcTerminalOpener', ['$document', '$templateCache', '$compile', 'terminal', function($document, $templateCache, $compile, terminal) {
@@ -75,24 +78,55 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
       options: "="
     },
     link: function(scope, el, attrs) {
+      scope.terminal = {
+        isOpen: false,
+        isHidden: false
+      };
       return el.on('click', function() {
         var draggableContainer, terminalContainer;
+        if (scope.terminal.isOpen) {
+          scope.terminal.isHidden = false;
+          terminal.focus();
+          return scope.$apply();
+        }
         draggableContainer = $templateCache.get('app/terminalContainer.tpl.html');
         draggableContainer = $compile(draggableContainer)(scope);
         $document.find('body').append(draggableContainer);
         terminalContainer = draggableContainer.find('mc-terminal');
-        return terminal.open(terminalContainer[0]);
+        terminal.open(terminalContainer[0]);
+        return scope.terminal.isOpen = true;
       });
     }
   };
 }]).directive('mcTerminalClose', ['$document', 'terminal', function($document, terminal) {
   return {
     restrict: "E",
-    template: "<div class='terminal-close'>X</div>",
+    template: "<div class='terminal-control'>X</div>",
     link: function(scope, el, attrs) {
       return el.on('click', function() {
         terminal.close();
-        return $document.find('mc-terminal-container').remove();
+        $document.find('mc-terminal-container').remove();
+        return scope.terminal.isOpen = false;
+      });
+    }
+  };
+}]).directive('mcTerminalHide', ['$document', 'terminal', function($document, terminal) {
+  return {
+    restrict: "E",
+    template: "<div class='terminal-control'>_</div>",
+    link: function(scope, el, attrs) {
+      el.on('click', function() {
+        return scope.$apply(function() {
+          return scope.terminal.isHidden = !scope.terminal.isHidden;
+        });
+      });
+      return scope.$watch("terminal.isHidden", function() {
+        var height;
+        console.log(scope.terminal.isHidden);
+        height = scope.terminal.isHidden ? "30px" : null;
+        return $document.find('mc-terminal-container').css({
+          height: height
+        });
       });
     }
   };
