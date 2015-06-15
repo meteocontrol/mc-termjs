@@ -28,22 +28,22 @@ angular.module 'mcTermJs', [
     mcSocket.on 'terminal:created', =>
       @terminal.open element
 
-      @terminal.write '\x1b[31mWelcome to term.js!\x1b[m\r\n'
+      @write '\x1b[31mWelcome to term.js!\x1b[m\r\n'
 
     mcSocket.on 'data', (data) =>
-      @terminal.write data
+      @write data
 
     mcSocket.on 'disconnect', =>
-      @terminal.write '\r\n\x1b[31mSocket disconnected!\x1b[m\r\n'
+      @write '\r\n\x1b[31mSocket disconnected!\x1b[m\r\n'
 
     mcSocket.on 'forced:disconnect', =>
-      @terminal.write '\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n'
+      @write '\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n'
 
     mcSocket.on 'reconnecting', (number) =>
-      @terminal.write "\x1b[31mTrying to reconnect socket! Attempt:#{number}\x1b[m\r\n"
+      @write "\x1b[31mTrying to reconnect socket! Attempt:#{number}\x1b[m\r\n"
 
     mcSocket.on 'reconnect', =>
-      @terminal.write "\x1b[31mSuccessfully reconnected to socket\x1b[m\r\n"
+      @write "\x1b[31mSuccessfully reconnected to socket\x1b[m\r\n"
 
     @terminal.on 'data', (data) ->
       mcSocket.emit 'data', data
@@ -51,15 +51,18 @@ angular.module 'mcTermJs', [
   close: ->
     mcSocket.emit 'terminal:destroy'
 
-    mcSocket.removeAllListeners 'data'
     mcSocket.removeAllListeners 'terminal:created'
+    mcSocket.removeAllListeners 'data'
     mcSocket.removeAllListeners 'disconnect'
-
+    mcSocket.removeAllListeners 'forced:disconnect'
+    mcSocket.removeAllListeners 'reconnecting'
+    mcSocket.removeAllListeners 'reconnect'
 
     @terminal = null
 
 
   write: (text) ->
+    return unless @terminal
     return unless text
     @terminal.write text
 

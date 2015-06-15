@@ -22,32 +22,32 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
       mcSocket.on('terminal:created', (function(_this) {
         return function() {
           _this.terminal.open(element);
-          return _this.terminal.write('\x1b[31mWelcome to term.js!\x1b[m\r\n');
+          return _this.write('\x1b[31mWelcome to term.js!\x1b[m\r\n');
         };
       })(this));
       mcSocket.on('data', (function(_this) {
         return function(data) {
-          return _this.terminal.write(data);
+          return _this.write(data);
         };
       })(this));
       mcSocket.on('disconnect', (function(_this) {
         return function() {
-          return _this.terminal.write('\r\n\x1b[31mSocket disconnected!\x1b[m\r\n');
+          return _this.write('\r\n\x1b[31mSocket disconnected!\x1b[m\r\n');
         };
       })(this));
       mcSocket.on('forced:disconnect', (function(_this) {
         return function() {
-          return _this.terminal.write('\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n');
+          return _this.write('\r\n\x1b[31mForced disconnect from server! Reload Page!\x1b[m\r\n');
         };
       })(this));
       mcSocket.on('reconnecting', (function(_this) {
         return function(number) {
-          return _this.terminal.write("\x1b[31mTrying to reconnect socket! Attempt:" + number + "\x1b[m\r\n");
+          return _this.write("\x1b[31mTrying to reconnect socket! Attempt:" + number + "\x1b[m\r\n");
         };
       })(this));
       mcSocket.on('reconnect', (function(_this) {
         return function() {
-          return _this.terminal.write("\x1b[31mSuccessfully reconnected to socket\x1b[m\r\n");
+          return _this.write("\x1b[31mSuccessfully reconnected to socket\x1b[m\r\n");
         };
       })(this));
       return this.terminal.on('data', function(data) {
@@ -56,12 +56,18 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
     },
     close: function() {
       mcSocket.emit('terminal:destroy');
-      mcSocket.removeAllListeners('data');
       mcSocket.removeAllListeners('terminal:created');
+      mcSocket.removeAllListeners('data');
       mcSocket.removeAllListeners('disconnect');
+      mcSocket.removeAllListeners('forced:disconnect');
+      mcSocket.removeAllListeners('reconnecting');
+      mcSocket.removeAllListeners('reconnect');
       return this.terminal = null;
     },
     write: function(text) {
+      if (!this.terminal) {
+        return;
+      }
       if (!text) {
         return;
       }
