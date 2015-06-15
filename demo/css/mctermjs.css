@@ -1,7 +1,6 @@
 .draggable-container {
     min-height: 30px;
-    height: 352px;
-    position: absolute;
+    position: fixed;
     overflow: hidden;
     background-color: #ccc;
     padding: 3px 0 0 3px;

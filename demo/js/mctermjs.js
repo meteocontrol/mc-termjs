@@ -69,6 +69,12 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
     },
     focus: function() {
       return this.terminal.focus();
+    },
+    hasFocus: function() {
+      if (!this.terminal) {
+        return false;
+      }
+      return !this.terminal.focus;
     }
   };
 }]).directive('mcTerminalOpener', ['$document', '$templateCache', '$compile', 'terminal', function($document, $templateCache, $compile, terminal) {

@@ -66,6 +66,10 @@ angular.module 'mcTermJs', [
   focus: ->
     @terminal.focus()
 
+  hasFocus: ->
+    return false unless @terminal
+    !@terminal.focus
+
 .directive 'mcTerminalOpener', ($document, $templateCache, $compile, terminal) ->
   restrict: "A"
   scope:
@@ -74,6 +78,7 @@ angular.module 'mcTermJs', [
     scope.terminal =
       isOpen: false
       isHidden: false
+
     el.on 'click', ->
       if scope.terminal.isOpen
         scope.terminal.isHidden = false
@@ -88,6 +93,7 @@ angular.module 'mcTermJs', [
       terminal.open terminalContainer[0]
 
       scope.terminal.isOpen = true
+
 
 
 .directive 'mcTerminalClose', ($document, terminal) ->
