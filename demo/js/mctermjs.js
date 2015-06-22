@@ -2,8 +2,13 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
   return socketFactory({
     prefix: 'mcTerm'
   });
-}]).service("terminal", ['$rootScope', '$document', 'mcSocket', function($rootScope, $document, mcSocket) {
+}]).service("terminal", ['$rootScope', '$document', '$window', 'mcSocket', function($rootScope, $document, $window, mcSocket) {
   return {
+    resetCss: null,
+    resetTerminal: {
+      cols: 80,
+      rows: 24
+    },
     createTerminal: function() {
       return new Terminal({
         cols: 80,
@@ -64,6 +69,33 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
       mcSocket.removeAllListeners('reconnect');
       return this.terminal = null;
     },
+    scroll: function(rows) {
+      return this.terminal.scrollDisp(rows);
+    },
+    maximize: function() {
+      var x, y;
+      this.resetTerminal.cols = this.terminal.cols;
+      this.resetTerminal.rows = this.terminal.rows;
+      x = $window.innerWidth / this.terminal.element.offsetWidth;
+      y = $window.innerHeight / this.terminal.element.offsetHeight;
+      x = (x * this.terminal.cols) | 0;
+      y = (y * this.terminal.rows) | 0;
+      this.terminal.resize(x, y);
+      return mcSocket.emit('resize', x, y);
+    },
+    reset: function() {
+      console.log(this.resetTerminal);
+      this.terminal.resize(this.resetTerminal.cols, this.resetTerminal.rows);
+      return mcSocket.emit('resize', this.resetTerminal.cols, this.resetTerminal.rows);
+    },
+    setResetCss: function(css) {
+      return this.resetCss = {
+        top: css.top + "px",
+        left: css.left + "px",
+        right: null,
+        bottom: null
+      };
+    },
     write: function(text) {
       if (!this.terminal) {
         return;
@@ -106,7 +138,48 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
         $document.find('body').append(draggableContainer);
         terminalContainer = draggableContainer.find('mc-terminal');
         terminal.open(terminalContainer[0]);
+        terminalContainer.on('DOMMouseScroll mousewheel', function(ev) {
+          if (ev.type === 'DOMMouseScroll') {
+            return terminal.scroll(ev.detail < 0 ? -5 : 5);
+          } else {
+            return terminal.scroll(ev.wheelDeltaY < 0 ? -5 : 5);
+          }
+        });
         return scope.terminal.isOpen = true;
+      });
+    }
+  };
+}]).directive('mcTerminalMaximize', ['$document', 'terminal', function($document, terminal) {
+  return {
+    restrict: "E",
+    template: "<div class='terminal-control'>O</div>",
+    link: function(scope, el, attrs) {
+      return el.on('click', function() {
+        var terminalContainer;
+        terminalContainer = $document.find('mc-terminal-container');
+        terminal.setResetCss(terminalContainer[0].getBoundingClientRect());
+        terminal.maximize();
+        scope.maximized = true;
+        return terminalContainer.css({
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0
+        });
+      });
+    }
+  };
+}]).directive('mcTerminalReset', ['$document', 'terminal', function($document, terminal) {
+  return {
+    restrict: "E",
+    template: "<div class='terminal-control'>O</div>",
+    link: function(scope, el, attrs) {
+      return el.on('click', function() {
+        var terminalContainer;
+        terminalContainer = $document.find('mc-terminal-container');
+        terminal.reset();
+        scope.maximized = false;
+        return terminalContainer.css(terminal.resetCss);
       });
     }
   };

@@ -7,7 +7,11 @@ angular.module 'mcTermJs', [
 .factory 'mcSocket', (socketFactory) ->
   socketFactory prefix: 'mcTerm'
 
-.service "terminal", ($rootScope, $document, mcSocket) ->
+.service "terminal", ($rootScope, $document, $window, mcSocket) ->
+  resetCss: null
+  resetTerminal:
+    cols: 80
+    rows: 24
 
   createTerminal: ->
     new Terminal
@@ -60,6 +64,36 @@ angular.module 'mcTermJs', [
 
     @terminal = null
 
+  scroll: (rows) ->
+    @terminal.scrollDisp rows
+
+  maximize: ->
+    @resetTerminal.cols = @terminal.cols
+    @resetTerminal.rows = @terminal.rows
+
+    x = $window.innerWidth / @terminal.element.offsetWidth
+    y = $window.innerHeight / @terminal.element.offsetHeight
+
+    x = (x * @terminal.cols) | 0;
+    y = (y * @terminal.rows) | 0;
+
+    @terminal.resize x, y
+    mcSocket.emit 'resize',  x, y
+
+  reset: ->
+    console.log @resetTerminal
+
+    @terminal.resize @resetTerminal.cols, @resetTerminal.rows
+    mcSocket.emit 'resize',  @resetTerminal.cols, @resetTerminal.rows
+
+
+  setResetCss: (css) ->
+    @resetCss =
+      top:    "#{css.top}px"
+      left:   "#{css.left}px"
+      right:  null
+      bottom: null
+
 
   write: (text) ->
     return unless @terminal
@@ -95,7 +129,45 @@ angular.module 'mcTermJs', [
       terminalContainer =  draggableContainer.find('mc-terminal')
       terminal.open terminalContainer[0]
 
+
+      terminalContainer.on 'DOMMouseScroll mousewheel', (ev) ->
+        if ev.type == 'DOMMouseScroll'
+          terminal.scroll if ev.detail < 0 then -5 else 5
+        else
+          terminal.scroll if ev.wheelDeltaY < 0 then -5 else 5
+
       scope.terminal.isOpen = true
+
+
+.directive 'mcTerminalMaximize', ($document, terminal) ->
+  restrict: "E"
+  template: "<div class='terminal-control'>O</div>"
+  link: (scope, el, attrs) ->
+    el.on 'click', ->
+      terminalContainer = $document.find('mc-terminal-container')
+
+      terminal.setResetCss terminalContainer[0].getBoundingClientRect()
+
+      terminal.maximize()
+      scope.maximized = true
+
+      terminalContainer.css
+        top: 0
+        left: 0
+        bottom: 0
+        right:  0
+
+
+.directive 'mcTerminalReset', ($document, terminal) ->
+  restrict: "E"
+  template: "<div class='terminal-control'>O</div>"
+  link: (scope, el, attrs) ->
+    el.on 'click', ->
+      terminalContainer = $document.find('mc-terminal-container')
+
+      terminal.reset()
+      scope.maximized = false
+      terminalContainer.css terminal.resetCss
 
 
 
