@@ -67,22 +67,30 @@ angular.module 'mcTermJs', [
   scroll: (rows) ->
     @terminal.scrollDisp rows
 
-  maximize: ->
-    @resetTerminal.cols = @terminal.cols
-    @resetTerminal.rows = @terminal.rows
 
-    x = $window.innerWidth / @terminal.element.offsetWidth
-    y = $window.innerHeight / @terminal.element.offsetHeight
-
+  resize: (x ,y) ->
     x = (x * @terminal.cols) | 0;
     y = (y * @terminal.rows) | 0;
 
     @terminal.resize x, y
     mcSocket.emit 'resize',  x, y
 
-  reset: ->
-    console.log @resetTerminal
 
+  maximize: ->
+    @resetTerminal.cols = @terminal.cols
+    @resetTerminal.rows = @terminal.rows
+
+    console.log @terminal.element.offsetWidth
+    console.log @terminal.element.offsetHeight
+
+    x = $window.innerWidth / @terminal.element.offsetWidth
+    y = $window.innerHeight / @terminal.element.offsetHeight
+
+    console.log x, y
+
+    @resize x, y
+
+  reset: ->
     @terminal.resize @resetTerminal.cols, @resetTerminal.rows
     mcSocket.emit 'resize',  @resetTerminal.cols, @resetTerminal.rows
 
@@ -158,6 +166,62 @@ angular.module 'mcTermJs', [
         right:  0
 
 
+.directive 'mcTerminalResize', ($document, terminal) ->
+  restrict: "E"
+  template: "<div class='terminal-resize'></div>"
+  link: (scope, el, attrs) ->
+
+    startPos          = null
+    terminalContainer = null
+    newWidth          = null
+    newHeight         = null
+
+    el.on 'mousedown', (ev) ->
+      terminalContainer = $document.find('mc-terminal-container')
+      terminalContainer.css
+        opacity: 0.6
+
+      startPos = terminalContainer[0].getBoundingClientRect()
+
+      ev.preventDefault()
+      $document.on 'mousemove', mousemove
+      $document.on 'mouseup', mouseup
+
+
+    mousemove = (ev) ->
+      x = ev.pageX
+      y = ev.pageY
+
+      newWidth = Math.floor startPos.width + (x - startPos.left - startPos.width)
+      newHeight = Math.floor startPos.height + (y - startPos.top - startPos.height)
+
+      $document.find('mc-terminal').children().css
+        height: "#{newHeight-40}px"
+
+
+      terminalContainer.css
+        width: "#{newWidth}px"
+        height: "#{newHeight}px"
+
+    mouseup = ->
+
+      x = newWidth / startPos.width
+      y = newHeight / (startPos.height - 35)
+
+      terminal.resize x, y
+
+      $document.find('mc-terminal').children().css
+        height: null
+
+      terminalContainer.css
+        opacity: 1
+        height: null
+        width: null
+
+      $document.unbind 'mousemove', mousemove
+      $document.unbind 'mouseup', mouseup
+
+
 .directive 'mcTerminalReset', ($document, terminal) ->
   restrict: "E"
   template: "<div class='terminal-control'>O</div>"
@@ -191,6 +255,5 @@ angular.module 'mcTermJs', [
         scope.terminal.isHidden = !scope.terminal.isHidden
 
     scope.$watch "terminal.isHidden", ->
-      console.log scope.terminal.isHidden
       height = if scope.terminal.isHidden then "30px" else null
       $document.find('mc-terminal-container').css height: height

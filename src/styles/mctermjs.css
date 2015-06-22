@@ -30,3 +30,15 @@
     cursor: pointer;
     font-family: arial;
 }
+
+
+.terminal-resize {
+    position: absolute;
+    cursor: nwse-resize;
+    width: 3px;
+    height: 3px;
+    bottom: 0;
+    right:0;
+    border: 1px solid black;
+}
+

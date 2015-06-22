@@ -10,9 +10,6 @@
     -moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);
     box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);
 
-    -webkit-transition: height 200ms linear;
-    -moz-transition: height 200ms linear;
-    transition: height 200ms linear;
     opacity: 1
 }
 
