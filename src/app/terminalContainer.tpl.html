@@ -1,9 +1,9 @@
 <mc-terminal-container class="draggable-container terminal-minimize-animation" mc-draggable>
   <div class="draggable-header draggable-handler" mc-draggable-handler>
     <div class="terminal-title">Apollon Debug-Console</div>
+    <mc-terminal-close></mc-terminal-close>
     <mc-terminal-reset ng-show="maximized"></mc-terminal-reset>
     <mc-terminal-maximize ng-hide="maximized"></mc-terminal-maximize>
-    <mc-terminal-close></mc-terminal-close>
     <mc-terminal-hide></mc-terminal-hide>
   </div>
   <mc-terminal class="draggable-content"></mc-terminal>

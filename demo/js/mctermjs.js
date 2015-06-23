@@ -145,9 +145,9 @@ angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocke
         terminal.open(terminalContainer[0]);
         terminalContainer.on('DOMMouseScroll mousewheel', function(ev) {
           if (ev.type === 'DOMMouseScroll') {
-            return terminal.scroll(ev.detail < 0 ? -5 : 5);
+            return terminal.scroll(ev.detail > 0 ? -5 : 5);
           } else {
-            return terminal.scroll(ev.wheelDeltaY < 0 ? -5 : 5);
+            return terminal.scroll(ev.wheelDeltaY > 0 ? -5 : 5);
           }
         });
         return scope.terminal.isOpen = true;

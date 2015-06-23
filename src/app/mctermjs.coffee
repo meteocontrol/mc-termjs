@@ -140,9 +140,9 @@ angular.module 'mcTermJs', [
 
       terminalContainer.on 'DOMMouseScroll mousewheel', (ev) ->
         if ev.type == 'DOMMouseScroll'
-          terminal.scroll if ev.detail < 0 then -5 else 5
+          terminal.scroll if ev.detail > 0 then -5 else 5
         else
-          terminal.scroll if ev.wheelDeltaY < 0 then -5 else 5
+          terminal.scroll if ev.wheelDeltaY > 0 then -5 else 5
 
       scope.terminal.isOpen = true
 
