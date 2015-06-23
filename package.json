@@ -1,6 +1,6 @@
 {
   "name": "mcTermJs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "mcTermJs.js",
   "dependencies": {
     "basic-auth": "^1.0.1",
