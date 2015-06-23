@@ -4,9 +4,12 @@
     "build/mctermjs.js",
     "build/mctermjs.css"
   ],
-  "version": "0.0.13",
+  "version": "0.0.15",
   "authors": [
-    {"name": "Thomas Achleitner", "email": "t.achleitner@metecontrol.de"}
+    {
+      "name": "Thomas Achleitner",
+      "email": "t.achleitner@metecontrol.de"
+    }
   ],
   "repository": {
     "type": "git",
@@ -22,10 +25,9 @@
   "dependencies": {
     "angular": "*",
     "angular-animate": "*",
-    "angular-socket-io" :"*"
+    "angular-socket-io": "*"
   },
   "devDependencies": {
     "angular-mocks": "*"
   }
 }
-
