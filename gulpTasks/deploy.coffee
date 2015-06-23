@@ -1,3 +1,4 @@
+chalk       = require "chalk"
 gulp        = require "gulp"
 gutil       = require "gulp-util"
 plugins     = require("gulp-load-plugins")(lazy: false)
@@ -29,6 +30,8 @@ inc = (importance) ->
   .pipe(plugins.git.commit('bumps package version'))
   .pipe(plugins.filter('package.json'))
   .pipe plugins.tagVersion()
+  .on "end", ->
+    gutil.log chalk.green "Successfully bummped version!", chalk.white "Dont forget to [ #{chalk.cyan.bold "git push"} ]!"
 
 
 gulp.task 'deploy-patch', ["deploy-app"], ->
