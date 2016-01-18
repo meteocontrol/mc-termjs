@@ -5,7 +5,6 @@ describe 'mcTermJs', ->
     $provide.value 'someMock', someMock
     return
 
-  beforeEach angular.mock.module 'btford.socket-io'
   beforeEach angular.mock.module 'mcTermJs'
 
   beforeEach inject (_$rootScope_, _$compile_, _$httpBackend_) ->
