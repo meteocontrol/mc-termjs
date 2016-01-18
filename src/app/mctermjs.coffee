@@ -1,11 +1,6 @@
 angular.module 'mcTermJs', [
-  'btford.socket-io'
   'mcDraggable'
 ]
-
-
-.factory 'mcSocket', (socketFactory) ->
-  socketFactory prefix: 'mcTerm'
 
 .service "terminal", ($rootScope, $document, $window, mcSocket) ->
   resetCss: null
