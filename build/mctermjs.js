@@ -1,8 +1,4 @@
-angular.module('mcTermJs', ['btford.socket-io', 'mcDraggable']).factory('mcSocket', ['socketFactory', function(socketFactory) {
-  return socketFactory({
-    prefix: 'mcTerm'
-  });
-}]).service("terminal", ['$rootScope', '$document', '$window', 'mcSocket', function($rootScope, $document, $window, mcSocket) {
+angular.module('mcTermJs', ['mcDraggable']).service("terminal", ['$rootScope', '$document', '$window', 'mcSocket', function($rootScope, $document, $window, mcSocket) {
   return {
     resetCss: null,
     resetTerminal: {
